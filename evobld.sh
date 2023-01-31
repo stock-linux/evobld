@@ -83,7 +83,7 @@ else
 fi
 
 # We can now build the evx package.
-# We need to copy the evx package to the chroot directory.
+# We need to copy the package folder to the chroot directory.
 # So we copy all the files (except the chroot directory) in the current directory to the chroot directory.
 if [ -d chroot/usr/src/$(basename $PWD) ]; then
     rm -rf chroot/usr/src/$(basename $PWD)

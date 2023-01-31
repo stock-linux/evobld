@@ -105,6 +105,7 @@ if [ -d $ROOT ]; then
     read answer
     if [ "$answer" = "y" ]; then
         rm -rf $ROOT
+        ALREADY_EXISTS=0
     else
         ALREADY_EXISTS=1
     fi

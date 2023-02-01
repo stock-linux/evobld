@@ -61,6 +61,22 @@ setup_chroot() {
     ln -s bash $ROOT/bin/sh
 }
 
+sync_structure() {
+    # For each line of etc/evox.conf, we copy the repo folder to the chroot directory if the repo exists.
+    # The line is of the form "REPO name url".
+    # We just need to get the path of the repo.
+    while read line; do
+    # If line is not empty and begins with "REPO", we copy the repo.
+        if [ "$line" != "" ] && [ "$(echo $line | cut -d ' ' -f 1)" = "REPO" ]; then
+            repo_path=$(echo $line | cut -d ' ' -f 3)
+            echo $repo_path
+            if [ -d $repo_path ]; then
+                cp -r $repo_path $ROOT/$repo_path
+            fi
+        fi
+    done < $ROOT/etc/evox.conf
+}
+
 print_help() {
     echo "Usage: evobld.sh [--use-chroot <chroot directory>]"
     echo "                 setup"
@@ -119,6 +135,7 @@ if [ $ALREADY_EXISTS -eq 0 ]; then
     setup_chroot
 fi
 
+sync_structure
 install_toolchain
 
 chroot $ROOT /bin/bash -c "pip3 install -r /usr/lib/evox/requirements.txt"

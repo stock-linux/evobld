@@ -70,7 +70,7 @@ sync_structure() {
         if [ "$line" != "" ] && [ "$(echo $line | cut -d ' ' -f 1)" = "REPO" ]; then
             repo_path=$(echo $line | cut -d ' ' -f 3)
             if [ -d $repo_path ]; then
-                if [ -z $ROOT/$repo_path ] then
+                if [ -z $ROOT/$repo_path ]; then
                     mkdir -p $ROOT/$repo_path
                 fi
                 cp -r $repo_path/* $ROOT/$repo_path

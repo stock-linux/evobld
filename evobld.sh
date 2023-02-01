@@ -69,7 +69,6 @@ sync_structure() {
     # If line is not empty and begins with "REPO", we copy the repo.
         if [ "$line" != "" ] && [ "$(echo $line | cut -d ' ' -f 1)" = "REPO" ]; then
             repo_path=$(echo $line | cut -d ' ' -f 3)
-            echo $repo_path
             if [ -d $repo_path ]; then
                 cp -r $repo_path $ROOT/$repo_path
             fi

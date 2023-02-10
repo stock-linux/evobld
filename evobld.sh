@@ -189,3 +189,13 @@ fi
 if [ -f $ROOT/usr/src/$(basename $PWD)/build.stderr.log ]; then
     cp $ROOT/usr/src/$(basename $PWD)/build.stderr.log .
 fi
+
+# And finally, we can copy the file in the local branch /var/evox/local
+mkdir -p /var/evox/local
+cp $(basename $PWD)-*.evx /var/evox/local
+
+# And we index the package in the INDEX
+version=$(awk -F "= " '/version / {print $2}' metadata/PKGINFO)
+pkgrel=$(awk -F "= " '/pkgrel / {print $2}' metadata/PKGINFO)
+
+echo "$(basename $PWD) $version $pkgrel" >> /var/evox/local/INDEX

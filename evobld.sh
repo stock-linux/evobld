@@ -194,6 +194,9 @@ fi
 mkdir -p /var/evox/local
 cp $(basename $PWD)-*.evx /var/evox/local
 
+# If there is already the package in the INDEX, we delete the line
+sed -i "/$(basename $PWD)/d" /var/evox/local/INDEX 
+
 # And we index the package in the INDEX
 version=$(awk -F "= " '/version / {print $2}' metadata/PKGINFO)
 pkgrel=$(awk -F "= " '/pkgrel / {print $2}' metadata/PKGINFO)

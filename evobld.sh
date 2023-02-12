@@ -202,3 +202,15 @@ version=$(awk -F "= " '/version / {print $2}' metadata/PKGINFO)
 pkgrel=$(awk -F "= " '/pkgrel / {print $2}' metadata/PKGINFO)
 
 echo "$(basename $PWD) $version $pkgrel" >> /var/evox/local/INDEX
+
+# Ask the user in which group he wants the package to be
+read -p 'Package distant branch: ' distant_branch
+
+mkdir -p /var/evobld/$distant_branch
+
+if test -f "/var/evobld/$distant_branch/INDEX"; then
+    sed -i "/$(basename $PWD)/d" /var/evobld/$distant_branch/INDEX
+fi
+
+echo "$(basename $PWD) $version $pkgrel" >> /var/evobld/$distant_branch/INDEX
+ln -s "/var/evox/local/$(basename $PWD)-$version.evx" "/var/evobld/$distant_branch/$(basename $PWD)-$version.evx"

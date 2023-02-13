@@ -198,8 +198,8 @@ cp $(basename $PWD)-*.evx /var/evox/local
 sed -i "/$(basename $PWD)/d" /var/evox/local/INDEX 
 
 # And we index the package in the INDEX
-version=$(awk -F "= " '/version / {print $2}' metadata/PKGINFO)
-pkgrel=$(awk -F "= " '/pkgrel / {print $2}' metadata/PKGINFO)
+version=$(awk -F "= " '/version =/ {print $2}' metadata/PKGINFO)
+pkgrel=$(awk -F "= " '/pkgrel =/ {print $2}' metadata/PKGINFO)
 
 echo "$(basename $PWD) $version $pkgrel" >> /var/evox/local/INDEX
 

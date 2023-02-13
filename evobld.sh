@@ -180,7 +180,10 @@ umount $ROOT/run
 umount $ROOT/tmp
 
 # We copy the evx package to the current directory.
-cp $ROOT/usr/src/$(basename $PWD)-*.evx .
+if [ -f $ROOT/usr/src/$(basename $PWD)-*.evx ]; then
+    cp $ROOT/usr/src/$(basename $PWD)-*.evx .
+fi
+
 # If they exist, we copy the log files to the current directory.
 if [ -f $ROOT/usr/src/$(basename $PWD)/build.stdout.log ]; then
     cp $ROOT/usr/src/$(basename $PWD)/build.stdout.log .
@@ -192,25 +195,26 @@ fi
 
 # And finally, we can copy the file in the local branch /var/evox/local
 mkdir -p /var/evox/local
-cp $(basename $PWD)-*.evx /var/evox/local
+if [ -f $ROOT/usr/src/$(basename $PWD)-*.evx ]; then
+    cp $(basename $PWD)-*.evx /var/evox/local
+    # If there is already the package in the INDEX, we delete the line
+    sed -i "/$(basename $PWD)/d" /var/evox/local/INDEX 
 
-# If there is already the package in the INDEX, we delete the line
-sed -i "/$(basename $PWD)/d" /var/evox/local/INDEX 
+    # And we index the package in the INDEX
+    version=$(awk -F "= " '/version =/ {print $2}' metadata/PKGINFO)
+    pkgrel=$(awk -F "= " '/pkgrel =/ {print $2}' metadata/PKGINFO)
 
-# And we index the package in the INDEX
-version=$(awk -F "= " '/version =/ {print $2}' metadata/PKGINFO)
-pkgrel=$(awk -F "= " '/pkgrel =/ {print $2}' metadata/PKGINFO)
+    echo "$(basename $PWD) $version $pkgrel" >> /var/evox/local/INDEX
 
-echo "$(basename $PWD) $version $pkgrel" >> /var/evox/local/INDEX
+    # Ask the user in which group he wants the package to be
+    read -p 'Package distant branch: ' distant_branch
 
-# Ask the user in which group he wants the package to be
-read -p 'Package distant branch: ' distant_branch
+    mkdir -p /var/evobld/$distant_branch
 
-mkdir -p /var/evobld/$distant_branch
+    if test -f "/var/evobld/$distant_branch/INDEX"; then
+        sed -i "/$(basename $PWD)/d" /var/evobld/$distant_branch/INDEX
+    fi
 
-if test -f "/var/evobld/$distant_branch/INDEX"; then
-    sed -i "/$(basename $PWD)/d" /var/evobld/$distant_branch/INDEX
+    echo "$(basename $PWD) $(echo $version | xargs) $(echo $pkgrel | xargs)" >> /var/evobld/$distant_branch/INDEX
+    ln -sf "/var/evox/local/$(basename $PWD)-$version.evx" "/var/evobld/$distant_branch/$(basename $PWD)-$version.evx"
 fi
-
-echo "$(basename $PWD) $version $pkgrel" >> /var/evobld/$distant_branch/INDEX
-ln -s "/var/evox/local/$(basename $PWD)-$version.evx" "/var/evobld/$distant_branch/$(basename $PWD)-$version.evx"

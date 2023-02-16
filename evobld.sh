@@ -198,7 +198,7 @@ mkdir -p /var/evox/local
 if [ -f $ROOT/usr/src/$(basename $PWD)-*.evx ]; then
     cp $(basename $PWD)-*.evx /var/evox/local
     # If there is already the package in the INDEX, we delete the line
-    sed -i "/$(basename $PWD)/d" /var/evox/local/INDEX 
+    sed -i "/$(basename $PWD)\s/d" /var/evox/local/INDEX 
 
     # And we index the package in the INDEX
     version=$(awk -F "= " '/version =/ {print $2}' metadata/PKGINFO)
@@ -212,7 +212,7 @@ if [ -f $ROOT/usr/src/$(basename $PWD)-*.evx ]; then
     mkdir -p /var/evobld/$distant_branch
 
     if test -f "/var/evobld/$distant_branch/INDEX"; then
-        sed -i "/$(basename $PWD)/d" /var/evobld/$distant_branch/INDEX
+        sed -i "/$(basename $PWD)\s/d" /var/evobld/$distant_branch/INDEX
     fi
 
     echo "$(basename $PWD) $(echo $version | xargs) $(echo $pkgrel | xargs)" >> /var/evobld/$distant_branch/INDEX
